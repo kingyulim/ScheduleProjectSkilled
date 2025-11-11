@@ -1,0 +1,23 @@
+package com.scheduleprojectskilled.SchedulePackage.Entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
+@Getter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class datetimeEntity {
+    @CreatedDate
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createDatetime;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updateDatetime;
+}
