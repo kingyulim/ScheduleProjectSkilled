@@ -1,4 +1,4 @@
-package com.scheduleprojectskilled.SchedulePackage.Entity;
+package com.scheduleprojectskilled.Config;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public class datetimeEntity {
+public class DatetimeHandler {
     @CreatedDate
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

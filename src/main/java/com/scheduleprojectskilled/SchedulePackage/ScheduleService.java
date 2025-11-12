@@ -1,12 +1,11 @@
-package com.scheduleprojectskilled.SchedulePackage.Service;
+package com.scheduleprojectskilled.SchedulePackage;
 
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.CreateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.UpdateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.CreateScheduleResponse;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.FindScheduleResponse;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.UpdateScheduleResponse;
-import com.scheduleprojectskilled.SchedulePackage.Entity.ScheduleEntity;
-import com.scheduleprojectskilled.SchedulePackage.Repository.ScheduleRepository;
+import com.scheduleprojectskilled.SchedulePackage.Exception.ScheduleNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +52,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public FindScheduleResponse findoneSchedule(Long scheduleId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException(noScheduleDataMessage)
+                () -> new ScheduleNotFoundException(noScheduleDataMessage)
         );
 
         return new FindScheduleResponse(
@@ -95,7 +94,7 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse updateSchedule(Long scheduleId, UpdateScheduleRequest request) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException(noScheduleDataMessage)
+                () -> new ScheduleNotFoundException(noScheduleDataMessage)
         );
 
         schedule.scheduleUpdate(
@@ -129,7 +128,7 @@ public class ScheduleService {
         if (exists) {
             scheduleRepository.deleteById(scheduleId);
         } else {
-            throw new IllegalArgumentException("존재하지 않은 댓글입니다.");
+            throw new ScheduleNotFoundException("존재하지 않은 댓글입니다.");
         }
     }
 }
