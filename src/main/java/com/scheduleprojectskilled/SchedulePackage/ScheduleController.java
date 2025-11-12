@@ -1,21 +1,19 @@
-package com.scheduleprojectskilled.SchedulePackage.Controller;
+package com.scheduleprojectskilled.SchedulePackage;
 
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.CreateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.UpdateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.CreateScheduleResponse;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.FindScheduleResponse;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.UpdateScheduleResponse;
-import com.scheduleprojectskilled.SchedulePackage.Service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
