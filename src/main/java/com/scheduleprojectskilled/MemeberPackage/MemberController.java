@@ -42,6 +42,10 @@ public class MemberController {
                 .body(memberService.findMember(id));
     }
 
+    /**
+     * 회원 다건 조회 검사 로직
+     * @return 모든 회원 정보 반환
+     */
     @GetMapping("/members")
     public ResponseEntity<List<FindMemberResponse>> findAllMembers() {
         return ResponseEntity
@@ -49,6 +53,13 @@ public class MemberController {
                 .body(memberService.findAllMember());
     }
 
+    /**
+     * 회원 정보 업데이트 검사 로직
+     * @param id 회원 고유 번호 파라미터
+     * @param request 입력된 값 파라미터
+     * @param session 세션 파라미터
+     * @return 수정된 유저 이름 반환
+     */
     @PutMapping("/members/{id}")
     public ResponseEntity<String> updateMember(@PathVariable("id") Long id, @Valid @RequestBody MemberUpdateRequest request, HttpSession session) {
         SessionResponse sessionUser = (SessionResponse) session.getAttribute("thisLoginMember");
@@ -101,6 +112,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(member.getMemberName() + "님 로그인 되었습니다.");
     }
 
+    /**
+     * 로그아웃 로직
+     * @param session 세션 파라미터
+     * @return 세션 종료 문구 반환
+     */
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         SessionResponse sessionResponse = (SessionResponse) session.getAttribute("thisLoginMember");

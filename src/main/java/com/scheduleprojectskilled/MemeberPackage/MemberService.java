@@ -110,6 +110,12 @@ public class MemberService {
                .toList();
     }
 
+    /**
+     * 회원 정보 업데이트 비지니스 로직 처리
+     * @param id 회원 고유 번호 파라미터
+     * @param request 입력된값 파라미터
+     * @return MemeberUpdateResponse 형태로 반환
+     */
     @Transactional
     public MemeberUpdateResponse memberUpdate(Long id, MemberUpdateRequest request) {
         MemberJoinEntity member = memberRepository
