@@ -19,6 +19,8 @@ public class CreateScheduleRequest {
     )
     private String wriName;
 
+    //------------
+
     @NotBlank(message = "제목이 입력되지 않았습니다.")
     @Size(
             min = 1,
@@ -26,6 +28,8 @@ public class CreateScheduleRequest {
             message = "제목은 1 ~ 50자 로 입력해주세요."
     )
     private String scheduleTitle;
+
+    //------------
 
     @NotBlank(message = "내용이 입력되지 않았습니다.")
     //@Pattern(regexp = "^<([a-z]+)([^<]+)(>(.)<\\/\\1>|\\s*\\/>)$")

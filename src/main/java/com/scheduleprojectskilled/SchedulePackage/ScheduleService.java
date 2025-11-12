@@ -1,5 +1,6 @@
 package com.scheduleprojectskilled.SchedulePackage;
 
+import com.scheduleprojectskilled.Config.ExceptionMessageEnum;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.CreateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.UpdateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.CreateScheduleResponse;
@@ -16,8 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-
-    private String noScheduleDataMessage = "해당 번호와 일치하는 스케줄이 없습니다.";
 
     /**
      * schedule 테이블 비지니스 로직 처리
@@ -52,7 +51,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public FindScheduleResponse findoneSchedule(Long scheduleId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFoundException(noScheduleDataMessage)
+                () -> new ScheduleNotFoundException(ExceptionMessageEnum.NO_SCHEDULE_MESSAGE.getMessage())
         );
 
         return new FindScheduleResponse(
@@ -94,7 +93,7 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse updateSchedule(Long scheduleId, UpdateScheduleRequest request) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFoundException(noScheduleDataMessage)
+                () -> new ScheduleNotFoundException(ExceptionMessageEnum.NO_SCHEDULE_MESSAGE.getMessage())
         );
 
         schedule.scheduleUpdate(
