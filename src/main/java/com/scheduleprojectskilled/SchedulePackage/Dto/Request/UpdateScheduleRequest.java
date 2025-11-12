@@ -14,6 +14,8 @@ public class UpdateScheduleRequest {
     )
     private String scheduleTitle;
 
+    //------------
+
     @NotBlank(message = "내용이 입력되지 않았습니다.")
     //@Pattern(regexp = "^<([a-z]+)([^<]+)(>(.)<\\/\\1>|\\s*\\/>)$")
     private String scheduleContent;

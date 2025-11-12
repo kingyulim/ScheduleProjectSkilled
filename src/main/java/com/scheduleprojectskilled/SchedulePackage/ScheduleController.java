@@ -25,7 +25,9 @@ public class ScheduleController {
      */
     @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(@Valid @RequestBody CreateScheduleRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.createSchedule(request));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(scheduleService.createSchedule(request));
     }
 
     /**
@@ -35,7 +37,9 @@ public class ScheduleController {
      */
     @GetMapping("/schedules/{scheduleId}")
     public ResponseEntity<FindScheduleResponse> findOneSchedule(@PathVariable("scheduleId") Long scheduleId){
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findoneSchedule(scheduleId));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(scheduleService.findoneSchedule(scheduleId));
     }
 
     /**
@@ -44,7 +48,9 @@ public class ScheduleController {
      */
     @GetMapping("/schedules")
     public ResponseEntity<List<FindScheduleResponse>> findAllSchedule(){
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAllSchedule());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(scheduleService.findAllSchedule());
     }
 
     /**
@@ -58,7 +64,9 @@ public class ScheduleController {
             @PathVariable("scheduleId") Long scheduleId,
             @Valid @RequestBody UpdateScheduleRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(scheduleId, request));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(scheduleService.updateSchedule(scheduleId, request));
     }
 
     /**
@@ -70,6 +78,8 @@ public class ScheduleController {
     public ResponseEntity<Void> deleteSchedule(@PathVariable("scheduleId") Long scheduleId){
         scheduleService.deleteSchedule(scheduleId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

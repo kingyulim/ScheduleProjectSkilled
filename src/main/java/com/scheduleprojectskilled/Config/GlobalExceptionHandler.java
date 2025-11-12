@@ -1,14 +1,10 @@
 package com.scheduleprojectskilled.Config;
 
-import com.scheduleprojectskilled.SchedulePackage.Exception.ScheduleException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,8 +13,8 @@ public class GlobalExceptionHandler {
      * @param ex ScheduleException 메세지 파라미터
      * @return 에러 메세지 String 반환
      */
-    @ExceptionHandler(ScheduleException.class)
-    public ResponseEntity<String> handleScheduleException(ScheduleException ex) {
+    @ExceptionHandler(ResetException.class)
+    public ResponseEntity<String> handleScheduleException(ResetException ex) {
         return ResponseEntity
                 .status(ex.getStatus())
                 .body(ex.getMessage());
