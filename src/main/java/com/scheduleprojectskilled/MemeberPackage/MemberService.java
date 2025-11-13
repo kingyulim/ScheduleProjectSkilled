@@ -2,12 +2,10 @@ package com.scheduleprojectskilled.MemeberPackage;
 
 import com.scheduleprojectskilled.Config.ExceptionMessageEnum;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.LoginRequest;
+import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberDeleteRequest;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberJoinRequest;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberUpdateRequest;
-import com.scheduleprojectskilled.MemeberPackage.Dto.Response.FindMemberResponse;
-import com.scheduleprojectskilled.MemeberPackage.Dto.Response.LoginResponse;
-import com.scheduleprojectskilled.MemeberPackage.Dto.Response.MemberJoinResponse;
-import com.scheduleprojectskilled.MemeberPackage.Dto.Response.MemeberUpdateResponse;
+import com.scheduleprojectskilled.MemeberPackage.Dto.Response.*;
 import com.scheduleprojectskilled.MemeberPackage.Exception.NoFindMemberId;
 import com.scheduleprojectskilled.MemeberPackage.Exception.NoMemberException;
 import com.scheduleprojectskilled.MemeberPackage.Exception.SameEmilException;
@@ -15,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -86,6 +85,7 @@ public class MemberService {
                 findMember.getId(),
                 findMember.getMemberName(),
                 findMember.getMemberEmail(),
+                findMember.getMemberCondition(),
                 findMember.getCreateDatetime(),
                 findMember.getUpdateDatetime()
         );
@@ -97,13 +97,14 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public List<FindMemberResponse> findAllMember() {
-       List<MemberJoinEntity> members = memberRepository.findAll();
+       List<MemberJoinEntity> members = memberRepository.findByMemberCondition("member");
 
        return members.stream()
                .map(m -> new FindMemberResponse(
                        m.getId(),
                        m.getMemberName(),
                        m.getMemberEmail(),
+                       m.getMemberCondition(),
                        m.getCreateDatetime(),
                        m.getUpdateDatetime()
                ))
@@ -138,6 +139,38 @@ public class MemberService {
                 member.getMemberName(),
                 member.getMemberEmail(),
                 member.getUpdateDatetime()
+        );
+    }
+
+    /**
+     * 회원탈퇴 비지니스 로직 처리
+     * @param memberId 회원 고유 번호 파라미터
+     * @param request 입력값 파라미터
+     */
+    @Transactional
+    public MemberDeleteResponse memberDelete(Long memberId, MemberDeleteRequest request) {
+        MemberJoinEntity member = memberRepository
+                .findById(memberId)
+                .orElseThrow(
+                        () -> new NoMemberException(ExceptionMessageEnum.NO_MEMBER_MESSAGE.getMessage())
+                );
+
+        if (!member.getMemberEmail().equals(request.getMemberEmail()) && !member.getMemberPassword().equals(request.getMemberPassword())) {
+            throw new NoMemberException(ExceptionMessageEnum.NO_MACHING_MEMBER.getMessage());
+        }
+
+        // 오늘 기준 한 달 뒤 날짜 생성
+        LocalDateTime deleteDate = LocalDateTime.now().plusMonths(1);
+
+        member.memberDeleteCondition("no_member", deleteDate);
+
+        // 데이터 바로 삭제 로직
+        //memberRepository.deleteById(memberId);
+
+        return new MemberDeleteResponse(
+                member.getId(),
+                member.getMemberName(),
+                member.getMemberEmail()
         );
     }
 }
