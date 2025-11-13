@@ -5,14 +5,14 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class UpdateScheduleResponse {
+public class ScheduleUpdateResponseDto {
     private final Long id;
     private final String wriName;
     private final String scheduleTitle;
     private final String scheduleContent;
     private final LocalDateTime updateDatetime;
 
-    public UpdateScheduleResponse(
+    public ScheduleUpdateResponseDto(
             Long idParm,
             String wriNameParm,
             String scheduleTitleParm,
