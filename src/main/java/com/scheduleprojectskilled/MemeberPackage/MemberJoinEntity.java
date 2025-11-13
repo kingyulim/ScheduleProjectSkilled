@@ -1,19 +1,18 @@
 package com.scheduleprojectskilled.MemeberPackage;
 
-import com.scheduleprojectskilled.Config.DatetimeHandler;
+import com.scheduleprojectskilled.Common.Entity.DatetimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
 @Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberJoinEntity extends DatetimeHandler {
+public class MemberJoinEntity extends DatetimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

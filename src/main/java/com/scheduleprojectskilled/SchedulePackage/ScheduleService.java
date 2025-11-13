@@ -1,6 +1,6 @@
 package com.scheduleprojectskilled.SchedulePackage;
 
-import com.scheduleprojectskilled.Config.ExceptionMessageEnum;
+import com.scheduleprojectskilled.Common.Exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.CreateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Request.UpdateScheduleRequest;
 import com.scheduleprojectskilled.SchedulePackage.Dto.Response.CreateScheduleResponse;
