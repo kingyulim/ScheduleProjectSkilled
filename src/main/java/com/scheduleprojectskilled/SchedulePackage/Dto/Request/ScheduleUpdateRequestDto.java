@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class UpdateScheduleRequest {
+public class ScheduleUpdateRequestDto {
     @NotBlank(message = "제목이 입력되지 않았습니다.")
     @Size(
             min = 1,
