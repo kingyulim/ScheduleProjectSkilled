@@ -1,10 +1,11 @@
 package com.scheduleprojectskilled.MemeberPackage.Exception;
 
-import com.scheduleprojectskilled.Config.ResetException;
-import org.springframework.http.HttpStatus;
+import com.scheduleprojectskilled.Common.Exception.CustomException;
+import com.scheduleprojectskilled.Common.Exception.ExceptionMessageEnum;
 
-public class NoFindMemberId extends ResetException {
-    public NoFindMemberId(String message) {
-        super(HttpStatus.UNAUTHORIZED, message);
+
+public class NoFindMemberId extends CustomException {
+    public NoFindMemberId() {
+        super(ExceptionMessageEnum.NO_MEMBER_ID);
     }
 }

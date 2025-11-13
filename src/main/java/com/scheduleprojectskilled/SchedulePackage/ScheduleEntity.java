@@ -1,6 +1,6 @@
 package com.scheduleprojectskilled.SchedulePackage;
 
-import com.scheduleprojectskilled.Config.DatetimeHandler;
+import com.scheduleprojectskilled.Common.Entity.DatetimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "schedules")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ScheduleEntity extends DatetimeHandler {
+public class ScheduleEntity extends DatetimeEntity {
     // 속성
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
