@@ -71,9 +71,11 @@ public class MemberController {
 
         MemeberUpdateResponse memberData = memberService.memberUpdate(id, request);
 
+        session.invalidate(); // 회원정보 변경 로그아웃
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(memberData.getMemberName() + "님의 정보가 수정 되었습니다.");
+                .body(memberData.getMemberName() + "님의 정보가 수정 되었습니다,\n다시 로그인 해주세요.");
     }
 
     /**
