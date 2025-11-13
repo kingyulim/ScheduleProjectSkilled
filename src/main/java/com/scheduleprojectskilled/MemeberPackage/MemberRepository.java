@@ -2,6 +2,7 @@ package com.scheduleprojectskilled.MemeberPackage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<MemberJoinEntity, Long> {
@@ -18,4 +19,11 @@ public interface MemberRepository extends JpaRepository<MemberJoinEntity, Long> 
      * @return 입력된 값이 비어있거나 데이터에 존재 하지 않는다면 에러 메세지 반환
      */
     Optional<MemberJoinEntity> findByMemberEmail(String memberEmail);
+
+    /**
+     * SELECT * FROM members WHERE member_condition = 'member'
+     * @param memberCondition member값 파라미터
+     * @return memberContion 이 member인 데이터만 반환
+     */
+    List<MemberJoinEntity> findByMemberCondition(String memberCondition);
 }

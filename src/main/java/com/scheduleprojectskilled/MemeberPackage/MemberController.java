@@ -1,6 +1,8 @@
 package com.scheduleprojectskilled.MemeberPackage;
 
+import com.scheduleprojectskilled.Config.ExceptionMessageEnum;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.LoginRequest;
+import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberDeleteRequest;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberJoinRequest;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Request.MemberUpdateRequest;
 import com.scheduleprojectskilled.MemeberPackage.Dto.Response.*;
@@ -61,12 +63,22 @@ public class MemberController {
      * @return 수정된 유저 이름 반환
      */
     @PutMapping("/members/{id}")
-    public ResponseEntity<String> updateMember(@PathVariable("id") Long id, @Valid @RequestBody MemberUpdateRequest request, HttpSession session) {
-        SessionResponse sessionUser = (SessionResponse) session.getAttribute("thisLoginMember");
-        if (sessionUser == null) {
+    public ResponseEntity<String> updateMember(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody MemberUpdateRequest request,
+            HttpSession session
+    ) {
+        SessionResponse sessionMember = (SessionResponse) session.getAttribute("thisLoginMember");
+        if (sessionMember == null) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("로그인이 필요합니다.");
+                    .body(ExceptionMessageEnum.NO_LOGIN.getMessage());
+        }
+
+        if (!sessionMember.getId().equals(id)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ExceptionMessageEnum.NO_MACHING_MEMBER.getMessage());
         }
 
         MemeberUpdateResponse memberData = memberService.memberUpdate(id, request);
@@ -76,6 +88,39 @@ public class MemberController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(memberData.getMemberName() + "님의 정보가 수정 되었습니다,\n다시 로그인 해주세요.");
+    }
+
+    /**
+     * 회원 탈퇴 검사 로직
+     * @param id 회원 고유 번호 파라미터
+     * @param request 회원 정보 입력 파라미터
+     * @param session 세션 파라미터
+     * @return 탈퇴한 회원 이름 반환
+     */
+    @DeleteMapping("/members/{id}")
+    public ResponseEntity<String> deleteMember(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody MemberDeleteRequest request,
+            HttpSession session
+    ) {
+        SessionResponse sessionMember = (SessionResponse) session.getAttribute("thisLoginMember");
+        if (sessionMember == null) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ExceptionMessageEnum.NO_LOGIN.getMessage());
+        }
+
+        if (!sessionMember.getId().equals(id)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(ExceptionMessageEnum.NO_MACHING_MEMBER.getMessage());
+        }
+
+        session.invalidate(); // 로그아웃
+
+        MemberDeleteResponse memberData = memberService.memberDelete(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(memberData.getMemberName() + "님의 계정이 탈퇴 처리 되었습니다.");
     }
 
     /**
@@ -92,7 +137,7 @@ public class MemberController {
         SessionResponse sessionMember = (SessionResponse) session.getAttribute("thisLoginMember");
         if (sessionMember != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("이미 로그인 상태입니다.");
+                    .body("로그인 상태입니다.");
         }
 
         LoginResponse member = memberService.login(request);
@@ -127,7 +172,7 @@ public class MemberController {
         }
 
         session.invalidate();
-        return ResponseEntity.status(HttpStatus.OK).body("세션이 종료되었습니다.");
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 되었습니다.");
     }
 
     /**
