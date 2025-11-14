@@ -107,12 +107,13 @@ public class MemberService {
                 .orElseThrow(
                         () -> new CustomException(ExceptionMessageEnum.EMPTY_EMAIL)
                 );
-
         /**
          * 최종 회원 정보 조회
          */
-        if (!member.getMemberPassword().equals(request.getMemberPassword())) {
-            throw new CustomException(ExceptionMessageEnum.NO_LOGIN);
+        boolean passwordMatch = passwordEncoder.matches(request.getMemberPassword(), member.getMemberPassword());
+
+        if (!passwordMatch) {
+            throw new CustomException(ExceptionMessageEnum.MEMBER_CHECK);
         }
 
         return new LoginMemberResponseDto(
