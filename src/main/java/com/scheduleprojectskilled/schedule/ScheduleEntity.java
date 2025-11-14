@@ -35,7 +35,7 @@ public class ScheduleEntity extends DatetimeEntity {
     private String scheduleContent;
 
     // 생성자
-    public ScheduleEntity(
+    public ScheduleEntity (
             String wriNameParm,
             String scheduleTitleParm,
             String scheduleContentParm

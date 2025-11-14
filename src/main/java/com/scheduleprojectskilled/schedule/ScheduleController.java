@@ -32,7 +32,7 @@ public class ScheduleController {
             @Valid @RequestBody ScheduleCreateRequestDto request,
             HttpSession session
     ) {
-        SessionResponse thisSession = (SessionResponse) session.getAttribute("session");
+        SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
 
         /**
          * 로그인 확인 예외 처리
