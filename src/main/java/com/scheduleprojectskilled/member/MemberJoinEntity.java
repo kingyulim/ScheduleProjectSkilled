@@ -17,16 +17,28 @@ public class MemberJoinEntity extends DatetimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(
+            length = 20,
+            nullable = false
+    )
     private String memberName;
 
-    @Column(length = 30, nullable = false)
+    @Column(
+            length = 30,
+            nullable = false
+    )
     private String memberEmail;
 
-    @Column(length = 200, nullable = false)
+    @Column(
+            length = 200,
+            nullable = false
+    )
     private String memberPassword;
 
-    @Column(length = 20, nullable = false)
+    @Column(
+            length = 20,
+            nullable = false
+    )
     private String memberCondition = "member";
 
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
