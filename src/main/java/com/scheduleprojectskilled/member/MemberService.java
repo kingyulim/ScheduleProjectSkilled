@@ -177,9 +177,11 @@ public class MemberService {
         /**
          * 바로 삭제하는게 아닌 오늘 날짜 기준 한달후에 삭제하는 데이터 추가
          */
+        int month = 1;
+
         member.memberDeleteCondition(
                 "no_member",
-                LocalDateTime.now().plusMonths(1)
+                LocalDateTime.now().plusMonths(month)
         );
 
         /**
@@ -190,7 +192,7 @@ public class MemberService {
         return new MemberDeleteResponseDto(
                 member.getId(),
                 member.getMemberName(),
-                member.getMemberName() + "님의 정보가 1달후에 삭제 됩니다."
+                member.getMemberName() + "님의 정보가 " + month + "달후에 삭제 됩니다."
         );
     }
 }
