@@ -1,10 +1,14 @@
 package com.scheduleprojectskilled.schedule;
 
+import com.scheduleprojectskilled.common.exception.CustomException;
+import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
+import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleCreateResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +28,19 @@ public class ScheduleController {
      * @return 검사된 데이터 JSON 반환
      */
     @PostMapping("/schedule")
-    public ResponseEntity<ScheduleCreateResponseDto> createSchedule(@Valid @RequestBody ScheduleCreateRequestDto request) {
+    public ResponseEntity<ScheduleCreateResponseDto> createSchedule(
+            @Valid @RequestBody ScheduleCreateRequestDto request,
+            HttpSession session
+    ) {
+        SessionResponse thisSession = (SessionResponse) session.getAttribute("session");
+
+        /**
+         * 로그인 확인 예외 처리
+         */
+        if (thisSession == null) {
+            throw new CustomException(ExceptionMessageEnum.NO_LOGIN);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(scheduleService.createSchedule(request));
