@@ -1,5 +1,6 @@
 package com.scheduleprojectskilled.member;
 
+import com.scheduleprojectskilled.common.config.PasswordEncoder;
 import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.member.dto.request.JoinMemberRequestDto;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 로그인 비지니스 로직 처리
@@ -26,18 +28,20 @@ public class MemberService {
      */
     @Transactional
     public JoinMemberResponseDto createMember(JoinMemberRequestDto request) {
-        MemberJoinEntity inputJoinMember = new MemberJoinEntity(
-                request.getMemberName(),
-                request.getMemberEmail(),
-                request.getMemberPassword()
-        );
-
         /**
          * 중복 되는 이메일 예외 처리 조건
          */
-        if (memberRepository.existsByMemberEmail(inputJoinMember.getMemberEmail())) {
+        if (memberRepository.existsByMemberEmail(request.getMemberEmail())) {
             throw new CustomException(ExceptionMessageEnum.DUPLICATE_EMAIL);
         }
+
+        String passwordEncoded = passwordEncoder.encode(request.getMemberPassword());
+
+        MemberJoinEntity inputJoinMember = new MemberJoinEntity(
+                request.getMemberName(),
+                request.getMemberEmail(),
+                passwordEncoded
+        );
 
         MemberJoinEntity savedMember = memberRepository.save(inputJoinMember);
 
