@@ -1,6 +1,7 @@
 package com.scheduleprojectskilled.schedule;
 
 import com.scheduleprojectskilled.common.entity.DatetimeEntity;
+import com.scheduleprojectskilled.member.MemberJoinEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,15 +35,21 @@ public class ScheduleEntity extends DatetimeEntity {
     )
     private String scheduleContent;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "member_id", nullable = false)
+    private MemberJoinEntity member;
+
     // 생성자
     public ScheduleEntity (
             String wriNameParm,
             String scheduleTitleParm,
-            String scheduleContentParm
+            String scheduleContentParm,
+            MemberJoinEntity memberParm
     ) {
         this.wriName = wriNameParm;
         this.scheduleTitle = scheduleTitleParm;
         this.scheduleContent = scheduleContentParm;
+        this.member = memberParm;
     }
 
     // 기능

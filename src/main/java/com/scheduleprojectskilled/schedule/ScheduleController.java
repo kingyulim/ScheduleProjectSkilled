@@ -5,7 +5,7 @@ import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
-import com.scheduleprojectskilled.schedule.dto.response.ScheduleCreateResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +27,8 @@ public class ScheduleController {
      * @param request 입력된 값 파라미터
      * @return 검사된 데이터 JSON 반환
      */
-    @PostMapping("/schedule")
-    public ResponseEntity<ScheduleCreateResponseDto> createSchedule(
+    @PostMapping("/createSchedule")
+    public ResponseEntity<CreateScheduleResponseDto> createSchedule(
             @Valid @RequestBody ScheduleCreateRequestDto request,
             HttpSession session
     ) {
@@ -43,7 +43,7 @@ public class ScheduleController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(scheduleService.createSchedule(request));
+                .body(scheduleService.createSchedule(thisSession.getId(), thisSession.getMemberName(), request));
     }
 
     /**

@@ -2,9 +2,11 @@ package com.scheduleprojectskilled.schedule;
 
 import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
+import com.scheduleprojectskilled.member.MemberJoinEntity;
+import com.scheduleprojectskilled.member.MemberRepository;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
-import com.scheduleprojectskilled.schedule.dto.response.ScheduleCreateResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * schedule 테이블 비지니스 로직 처리
@@ -24,22 +27,29 @@ public class ScheduleService {
      * @return Controller에 보여줄 CreateScheduleResponse반환
      */
     @Transactional
-    public ScheduleCreateResponseDto createSchedule(ScheduleCreateRequestDto request) {
+    public CreateScheduleResponseDto createSchedule(Long memberId, String memberName, ScheduleCreateRequestDto request) {
+        MemberJoinEntity member = memberRepository
+                .findById(memberId)
+                .orElseThrow(
+                        () -> new CustomException(ExceptionMessageEnum.NO_MEMBER_ID)
+                );
+
         ScheduleEntity schedule = new ScheduleEntity(
-                request.getWriName(),
+                member.getMemberName(),
                 request.getScheduleTitle(),
-                request.getScheduleContent()
+                request.getScheduleContent(),
+                member
         );
 
         ScheduleEntity saveSchedule = scheduleRepository.save(schedule);
 
-        return new ScheduleCreateResponseDto(
+        return new CreateScheduleResponseDto(
                 saveSchedule.getId(),
-                saveSchedule.getWriName(),
+                memberId,
+                memberName,
                 saveSchedule.getScheduleTitle(),
                 saveSchedule.getScheduleContent(),
-                saveSchedule.getCreateDatetime(),
-                saveSchedule.getUpdateDatetime()
+                saveSchedule.getCreateDatetime()
         );
     }
 
