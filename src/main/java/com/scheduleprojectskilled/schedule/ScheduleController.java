@@ -76,6 +76,12 @@ public class ScheduleController {
                 .body(scheduleMap);
     }
 
+    /**
+     * schedules 테이블 생성된 내가 쓴 스케줄 데이터 다건 조회
+     * @param memberId 회원 고유 번호 파라미터
+     * @param memberName 회원 이름
+     * @return Map<String, List<FindScheduleResponseDto>> json 반환
+     */
     @GetMapping("/findMySchedule")
     public ResponseEntity<Map<String, List<FindScheduleResponseDto>>> findMySchedule(
             @RequestParam Long memberId,
