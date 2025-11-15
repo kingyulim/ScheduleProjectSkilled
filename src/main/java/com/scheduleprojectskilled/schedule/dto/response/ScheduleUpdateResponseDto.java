@@ -13,4 +13,5 @@ public class ScheduleUpdateResponseDto {
     private final String scheduleTitle;
     private final String scheduleContent;
     private final LocalDateTime updateDatetime;
+    private final String UpdateMessage;
 }
