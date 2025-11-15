@@ -128,10 +128,18 @@ public class ScheduleService {
      * @return Controller에 보여줄 UpdateScheduleResponse반환
      */
     @Transactional
-    public ScheduleUpdateResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto request) {
+    public ScheduleUpdateResponseDto updateSchedule(Long scheduleId, Long memberId, String wriName, ScheduleUpdateRequestDto request) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
+
+        boolean updateCheck = scheduleRepository.existsByIdAndMemberIdAndWriName(scheduleId, memberId, wriName);
+
+        if (!updateCheck) {
+           throw new CustomException(ExceptionMessageEnum.UNAUTHORIZED);
+        }
+
+        String prevTitle = schedule.getScheduleTitle();
 
         schedule.scheduleUpdate(
                 request.getScheduleTitle(),
@@ -143,7 +151,8 @@ public class ScheduleService {
                 schedule.getWriName(),
                 schedule.getScheduleTitle(),
                 schedule.getScheduleContent(),
-                schedule.getUpdateDatetime()
+                schedule.getUpdateDatetime(),
+                schedule.getWriName() + "님의 \"" + prevTitle + "\"스케줄이 수정 되었습니다."
         );
     }
 

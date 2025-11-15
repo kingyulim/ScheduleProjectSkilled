@@ -29,7 +29,19 @@ public class MemberController {
      * @return JoinMemberResponseDto json 반환
      */
     @PostMapping("/join")
-    public ResponseEntity<JoinMemberResponseDto> createMember(@Valid @RequestBody JoinMemberRequestDto request) {
+    public ResponseEntity<JoinMemberResponseDto> createMember(
+            @Valid @RequestBody JoinMemberRequestDto request,
+            HttpSession session
+    ) {
+        SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
+
+        /**
+         * 로그인이 돼어 있으면 예외처리
+         */
+        if (thisSession != null) {
+            throw new CustomException(ExceptionMessageEnum.LOGIN_CHECK);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(memberService.createMember(request));
