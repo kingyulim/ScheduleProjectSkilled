@@ -56,7 +56,7 @@ public class MemberService {
      * @param id 회원 고유 번호 파라미터
      * @return MemberListResponse 데이터 반환
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public MemberListResponse findOneMember(Long id) {
         MemberJoinEntity member = memberRepository
                 .findById(id)
@@ -78,7 +78,7 @@ public class MemberService {
      * 회원 다건 조회 비지니스 로직 처리
      * @return MemberListResponse 데이터 반환
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MemberListResponse> findAllMember() {
         List<MemberJoinEntity> memberList = memberRepository.findByMemberCondition("member");
 

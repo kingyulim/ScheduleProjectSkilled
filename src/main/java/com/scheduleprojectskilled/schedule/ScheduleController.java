@@ -6,7 +6,7 @@ import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,22 +53,41 @@ public class ScheduleController {
      * @param scheduleId 스케줄 고유 번호 파라미터
      * @return 검사된 데이터 JSON 반환
      */
-    @GetMapping("/schedule/{scheduleId}")
-    public ResponseEntity<ScheduleFindResponseDto> findOneSchedule(@PathVariable("scheduleId") Long scheduleId){
+    @GetMapping("/findSchedule/{id}")
+    public ResponseEntity<FindScheduleResponseDto> findOneSchedule(@PathVariable("id") Long scheduleId){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(scheduleService.findoneSchedule(scheduleId));
+                .body(scheduleService.findOneSchedule(scheduleId));
     }
 
     /**
      * schedules 테이블 생성된 데이터 다건 조회
      * @return 검사된 데이터 JSON 반환
      */
-    @GetMapping("/schedule")
-    public ResponseEntity<List<ScheduleFindResponseDto>> findAllSchedule(){
+    @GetMapping("/findSchedule")
+    public ResponseEntity<Map<String, List<FindScheduleResponseDto>>> findAllSchedule(){
+
+        List<FindScheduleResponseDto> scheduleList = scheduleService.findAllSchedule();
+
+        Map<String, List<FindScheduleResponseDto>> scheduleMap = Map.of("scheduleList", scheduleList);
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(scheduleService.findAllSchedule());
+                .body(scheduleMap);
+    }
+
+    @GetMapping("/findMySchedule")
+    public ResponseEntity<Map<String, List<FindScheduleResponseDto>>> findMySchedule(
+            @RequestParam Long memberId,
+            @RequestParam String memberName
+    ) {
+        List<FindScheduleResponseDto> scheduleMyList = scheduleService.findMySchedule(memberId, memberName);
+
+        Map<String, List<FindScheduleResponseDto>> scheduleMap = Map.of("scheduleMyList", scheduleMyList);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(scheduleMap);
     }
 
     /**
