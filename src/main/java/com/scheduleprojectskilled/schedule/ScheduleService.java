@@ -7,7 +7,7 @@ import com.scheduleprojectskilled.member.MemberRepository;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,12 +59,12 @@ public class ScheduleService {
      * @return Controller에 보여줄 FindScheduleResponse반환
      */
     @Transactional(readOnly = true)
-    public ScheduleFindResponseDto findoneSchedule(Long scheduleId) {
+    public FindScheduleResponseDto findOneSchedule(Long scheduleId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
 
-        return new ScheduleFindResponseDto(
+        return new FindScheduleResponseDto(
                 schedule.getId(),
                 schedule.getWriName(),
                 schedule.getScheduleTitle(),
@@ -79,17 +79,44 @@ public class ScheduleService {
      * @return Controller에 보여줄 schedules 배열 반환
      */
     @Transactional(readOnly = true)
-    public List<ScheduleFindResponseDto> findAllSchedule() {
+    public List<FindScheduleResponseDto> findAllSchedule() {
         List<ScheduleEntity> schedules = scheduleRepository.findAll();
 
         return schedules.stream()
-                .map(s -> new ScheduleFindResponseDto(
+                .map(s -> new FindScheduleResponseDto(
                         s.getId(),
                         s.getWriName(),
                         s.getScheduleTitle(),
                         s.getScheduleContent(),
                         s.getCreateDatetime(),
                         s.getUpdateDatetime()
+                ))
+                .toList();
+    }
+
+    /**
+     * 내가 쓴 스케줄 다건 조회
+     * @param memberId 세션 고유 회원 번호 파라미터
+     * @param memberName 세션 회원 이름 파라미터
+     * @return 필터링 된 FindScheduleResponseDto 데이터 반환
+     */
+    @Transactional(readOnly = true)
+    public List<FindScheduleResponseDto> findMySchedule(Long memberId, String memberName) {
+        List<ScheduleEntity> myScheduleList = scheduleRepository.findByMemberIdAndWriName(memberId, memberName);
+
+        if (myScheduleList.isEmpty()) {
+            throw new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE);
+        }
+
+        return myScheduleList
+                .stream()
+                .map(m -> new FindScheduleResponseDto(
+                    m.getId(),
+                    m.getWriName(),
+                    m.getScheduleTitle(),
+                    m.getScheduleContent(),
+                    m.getCreateDatetime(),
+                    m.getUpdateDatetime()
                 ))
                 .toList();
     }
