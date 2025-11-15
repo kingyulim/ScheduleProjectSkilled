@@ -102,14 +102,26 @@ public class ScheduleController {
      * @param request 입력된 값 파라미터
      * @return 검사된 데이터 JSON 반환
      */
-    @PutMapping("/schedule/{scheduleId}")
+    @PutMapping("/scheduleUpdate/{id}")
     public ResponseEntity<ScheduleUpdateResponseDto> updateSchedule(
-            @PathVariable("scheduleId") Long scheduleId,
-            @Valid @RequestBody ScheduleUpdateRequestDto request
+            @PathVariable("id") Long scheduleId,
+            @Valid @RequestBody ScheduleUpdateRequestDto request,
+            HttpSession session
     ) {
+        SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
+
+        if (thisSession == null) {
+            throw new CustomException(ExceptionMessageEnum.NO_LOGIN);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(scheduleService.updateSchedule(scheduleId, request));
+                .body(scheduleService.updateSchedule(
+                        scheduleId,
+                        thisSession.getId(),
+                        thisSession.getMemberName(),
+                        request
+                ));
     }
 
     /**
