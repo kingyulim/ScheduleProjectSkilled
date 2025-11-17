@@ -22,7 +22,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 로그인 비지니스 로직 처리
+     * 회원가입 비지니스 로직 처리
      * @param request 회원 가입 정보 파라미터
      * @return JoinMemberResponseDto 데이터 반환
      */
@@ -107,6 +107,7 @@ public class MemberService {
                 .orElseThrow(
                         () -> new CustomException(ExceptionMessageEnum.EMPTY_EMAIL)
                 );
+
         /**
          * 최종 회원 정보 조회
          */
