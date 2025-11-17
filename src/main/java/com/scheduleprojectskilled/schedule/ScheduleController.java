@@ -6,6 +6,7 @@ import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.DeleteScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import jakarta.servlet.http.HttpSession;
@@ -119,7 +120,6 @@ public class ScheduleController {
                 .body(scheduleService.updateSchedule(
                         scheduleId,
                         thisSession.getId(),
-                        thisSession.getMemberName(),
                         request
                 ));
     }
@@ -129,12 +129,18 @@ public class ScheduleController {
      * @param scheduleId schedules 고유 번호 파라미터
      * @return 검사된 데이터 JSON 반환
      */
-    @DeleteMapping("/schedule/{scheduleId}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable("scheduleId") Long scheduleId){
-        scheduleService.deleteSchedule(scheduleId);
+    @DeleteMapping("/deleteSchedule/{id}")
+    public ResponseEntity<DeleteScheduleResponseDto> deleteSchedule(@PathVariable("id") Long scheduleId, HttpSession session) {
+        SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
+
+        if (thisSession == null) {
+            throw new CustomException(ExceptionMessageEnum.NO_LOGIN);
+        }
+
+        DeleteScheduleResponseDto deleteSchedule = scheduleService.deleteSchedule(scheduleId, thisSession.getId());
 
         return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
+                .status(HttpStatus.OK)
+                .body(deleteSchedule);
     }
 }
