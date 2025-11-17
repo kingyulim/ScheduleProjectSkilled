@@ -7,6 +7,7 @@ import com.scheduleprojectskilled.member.MemberRepository;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.DeleteScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -128,12 +129,12 @@ public class ScheduleService {
      * @return Controller에 보여줄 UpdateScheduleResponse반환
      */
     @Transactional
-    public ScheduleUpdateResponseDto updateSchedule(Long scheduleId, Long memberId, String wriName, ScheduleUpdateRequestDto request) {
+    public ScheduleUpdateResponseDto updateSchedule(Long scheduleId, Long memberId, ScheduleUpdateRequestDto request) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
 
-        boolean updateCheck = scheduleRepository.existsByIdAndMemberIdAndWriName(scheduleId, memberId, wriName);
+        boolean updateCheck = scheduleRepository.existsByIdAndMemberId(scheduleId, memberId);
 
         if (!updateCheck) {
            throw new CustomException(ExceptionMessageEnum.UNAUTHORIZED);
@@ -161,19 +162,26 @@ public class ScheduleService {
      * @param scheduleId schedule 고유 번호 파라미터
      */
     @Transactional
-    public void deleteSchedule(Long scheduleId) {
-        /*
+    public DeleteScheduleResponseDto deleteSchedule(Long scheduleId, Long memberId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new IllegalArgumentException(noScheduleDataMessage)
+                () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
-         */
 
-        boolean exists = scheduleRepository.existsById(scheduleId);
+        boolean deleteCheck = scheduleRepository.existsByIdAndMemberId(scheduleId, memberId);
 
-        if (exists) {
-            scheduleRepository.deleteById(scheduleId);
-        } else {
-            throw new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE);
+        if (!deleteCheck) {
+            throw new CustomException(ExceptionMessageEnum.UNAUTHORIZED);
         }
+
+        String prevTitle = schedule.getScheduleTitle();
+
+        scheduleRepository.deleteById(scheduleId);
+
+        return new DeleteScheduleResponseDto(
+                scheduleId,
+                schedule.getScheduleTitle(),
+                memberId,
+                prevTitle + " 게시물이 삭제 되었습니다."
+        );
     }
 }
