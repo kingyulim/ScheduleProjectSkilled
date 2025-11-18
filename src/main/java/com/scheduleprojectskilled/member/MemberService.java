@@ -171,7 +171,9 @@ public class MemberService {
                         () -> new CustomException(ExceptionMessageEnum.NO_MEMBER_ID)
                 );
 
-        if (!member.getMemberEmail().equals(request.getMemberEmail()) || !member.getMemberPassword().equals(request.getMemberPassword())) {
+        boolean passwordMatch = passwordEncoder.matches(request.getMemberPassword(), member.getMemberPassword());
+
+        if (!member.getMemberEmail().equals(request.getMemberEmail()) || !passwordMatch) {
             throw new CustomException(ExceptionMessageEnum.MEMBER_CHECK);
         }
 
