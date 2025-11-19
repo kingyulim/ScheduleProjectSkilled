@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class CreateScheduleResponseDto {
+public class ScheduleCreateResponseDto {
     private final Long id;
     private final Long memberId;
     private final String wriName;
