@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class JoinMemberRequestDto extends ComMemberRequestDto {
+public class MemberJoinRequestDto extends ComMemberRequestDto {
     @NotBlank(message = "이름이 입력되지 않았습니다.")
     @Size(
             min = 1,

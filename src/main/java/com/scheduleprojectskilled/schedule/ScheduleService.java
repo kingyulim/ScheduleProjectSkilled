@@ -1,26 +1,32 @@
 package com.scheduleprojectskilled.schedule;
 
+import com.scheduleprojectskilled.comment.CommentRepository;
+import com.scheduleprojectskilled.comment.Dto.Response.CommentFindResponseDto;
 import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.member.MemberJoinEntity;
 import com.scheduleprojectskilled.member.MemberRepository;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
-import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.DeleteScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleCreateResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleDeleteResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * schedule 테이블 비지니스 로직 처리
@@ -28,7 +34,7 @@ public class ScheduleService {
      * @return Controller에 보여줄 CreateScheduleResponse반환
      */
     @Transactional
-    public CreateScheduleResponseDto createSchedule(Long memberId, String memberName, ScheduleCreateRequestDto request) {
+    public ScheduleCreateResponseDto createSchedule(Long memberId, String memberName, ScheduleCreateRequestDto request) {
         MemberJoinEntity member = memberRepository
                 .findById(memberId)
                 .orElseThrow(
@@ -44,7 +50,7 @@ public class ScheduleService {
 
         ScheduleEntity saveSchedule = scheduleRepository.save(schedule);
 
-        return new CreateScheduleResponseDto(
+        return new ScheduleCreateResponseDto(
                 saveSchedule.getId(),
                 memberId,
                 memberName,
@@ -60,18 +66,19 @@ public class ScheduleService {
      * @return Controller에 보여줄 FindScheduleResponse반환
      */
     @Transactional(readOnly = true)
-    public FindScheduleResponseDto findOneSchedule(Long scheduleId) {
+    public ScheduleFindResponseDto findOneSchedule(Long scheduleId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
 
-        return new FindScheduleResponseDto(
+        return new ScheduleFindResponseDto(
                 schedule.getId(),
                 schedule.getWriName(),
                 schedule.getScheduleTitle(),
                 schedule.getScheduleContent(),
                 schedule.getCreateDatetime(),
-                schedule.getUpdateDatetime()
+                schedule.getUpdateDatetime(),
+                commentRepository.findBySchedule_IdAndMember_Id(schedule.getId(), schedule.getMember().getId())
         );
     }
 
@@ -80,17 +87,18 @@ public class ScheduleService {
      * @return Controller에 보여줄 schedules 배열 반환
      */
     @Transactional(readOnly = true)
-    public List<FindScheduleResponseDto> findAllSchedule() {
+    public List<ScheduleFindResponseDto> findAllSchedule() {
         List<ScheduleEntity> schedules = scheduleRepository.findAll();
 
         return schedules.stream()
-                .map(s -> new FindScheduleResponseDto(
+                .map(s -> new ScheduleFindResponseDto(
                         s.getId(),
                         s.getWriName(),
                         s.getScheduleTitle(),
                         s.getScheduleContent(),
                         s.getCreateDatetime(),
-                        s.getUpdateDatetime()
+                        s.getUpdateDatetime(),
+                        commentRepository.findBySchedule_IdAndMember_Id(s.getId(), s.getMember().getId())
                 ))
                 .toList();
     }
@@ -102,7 +110,7 @@ public class ScheduleService {
      * @return 필터링 된 FindScheduleResponseDto 데이터 반환
      */
     @Transactional(readOnly = true)
-    public List<FindScheduleResponseDto> findMySchedule(Long memberId, String memberName) {
+    public List<ScheduleFindResponseDto> findMySchedule(Long memberId, String memberName) {
         List<ScheduleEntity> myScheduleList = scheduleRepository.findByMemberIdAndWriName(memberId, memberName);
 
         if (myScheduleList.isEmpty()) {
@@ -111,13 +119,14 @@ public class ScheduleService {
 
         return myScheduleList
                 .stream()
-                .map(m -> new FindScheduleResponseDto(
+                .map(m -> new ScheduleFindResponseDto(
                     m.getId(),
                     m.getWriName(),
                     m.getScheduleTitle(),
                     m.getScheduleContent(),
                     m.getCreateDatetime(),
-                    m.getUpdateDatetime()
+                    m.getUpdateDatetime(),
+                    commentRepository.findBySchedule_IdAndMember_Id(m.getId(), m.getMember().getId())
                 ))
                 .toList();
     }
@@ -137,7 +146,7 @@ public class ScheduleService {
         boolean updateCheck = scheduleRepository.existsByIdAndMemberId(scheduleId, memberId);
 
         if (!updateCheck) {
-           throw new CustomException(ExceptionMessageEnum.UNAUTHORIZED);
+           throw new CustomException(ExceptionMessageEnum.MEMBER_FORBIDDEN);
         }
 
         String prevTitle = schedule.getScheduleTitle();
@@ -162,22 +171,29 @@ public class ScheduleService {
      * @param scheduleId schedule 고유 번호 파라미터
      */
     @Transactional
-    public DeleteScheduleResponseDto deleteSchedule(Long scheduleId, Long memberId) {
+    public ScheduleDeleteResponseDto deleteSchedule(Long scheduleId, Long memberId) {
         ScheduleEntity schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new CustomException(ExceptionMessageEnum.NOT_FOUND_SCHEDULE)
         );
 
-        boolean deleteCheck = scheduleRepository.existsByIdAndMemberId(scheduleId, memberId);
+        /**
+         * 댓글이 1개 이상 달려 있다면 예외 처리
+         */
+        long commentCount = commentRepository.countByScheduleId(scheduleId);
+        if (commentCount > 0) {
+            throw new CustomException(ExceptionMessageEnum.NOT_DELETE_SCHEDULE);
+        }
 
+        boolean deleteCheck = scheduleRepository.existsByIdAndMemberId(scheduleId, memberId);
         if (!deleteCheck) {
-            throw new CustomException(ExceptionMessageEnum.UNAUTHORIZED);
+            throw new CustomException(ExceptionMessageEnum.MEMBER_FORBIDDEN);
         }
 
         String prevTitle = schedule.getScheduleTitle();
 
         scheduleRepository.deleteById(scheduleId);
 
-        return new DeleteScheduleResponseDto(
+        return new ScheduleDeleteResponseDto(
                 scheduleId,
                 schedule.getScheduleTitle(),
                 memberId,

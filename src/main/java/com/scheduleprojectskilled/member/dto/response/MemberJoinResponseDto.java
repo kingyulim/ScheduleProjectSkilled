@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class LoginMemberResponseDto {
+public class MemberJoinResponseDto {
     private final Long id;
     private final String memberName;
-    private final String loginMessage;
 }

@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class JoinMemberResponseDto {
+public class MemberLoginResponseDto {
     private final Long id;
     private final String memberName;
+    private final String memberCondition;
+    private final String loginMessage;
 }

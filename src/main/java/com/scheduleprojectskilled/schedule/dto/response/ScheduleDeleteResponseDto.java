@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class DeleteScheduleResponseDto {
+public class ScheduleDeleteResponseDto {
     private final Long scheduleId;
     private final String scheduleTitle;
     private final Long memberId;

@@ -1,4 +1,4 @@
-package com.scheduleprojectskilled.schedule.dto.response;
+package com.scheduleprojectskilled.comment.Dto.Response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @RequiredArgsConstructor
-public class FindScheduleResponseDto {
-    private final Long id;
-    private final String wriName;
+public class CommentFindResponseDto {
+    private final Long scheduleId;
+    private final Long memberId;
+    private final String commentWriName;
     private final String scheduleTitle;
-    private final String scheduleContent;
+    private final String commentContent;
     private final LocalDateTime createDatetime;
     private final LocalDateTime updateDatetime;
 }
