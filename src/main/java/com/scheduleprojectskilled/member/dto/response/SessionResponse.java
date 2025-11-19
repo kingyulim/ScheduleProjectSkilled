@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class SessionResponse {
     private final Long id;
     private final String memberName;
+    private final String memberCondition;
 }
