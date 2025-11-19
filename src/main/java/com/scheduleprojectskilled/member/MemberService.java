@@ -3,8 +3,8 @@ package com.scheduleprojectskilled.member;
 import com.scheduleprojectskilled.common.config.PasswordEncoder;
 import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
-import com.scheduleprojectskilled.member.dto.request.JoinMemberRequestDto;
-import com.scheduleprojectskilled.member.dto.request.LoginMemberRequestDto;
+import com.scheduleprojectskilled.member.dto.request.MemberJoinRequestDto;
+import com.scheduleprojectskilled.member.dto.request.MemberLoginRequestDto;
 import com.scheduleprojectskilled.member.dto.request.MemberDeleteRequestDto;
 import com.scheduleprojectskilled.member.dto.request.MemberUpdateRequestDto;
 import com.scheduleprojectskilled.member.dto.response.*;
@@ -27,7 +27,7 @@ public class MemberService {
      * @return JoinMemberResponseDto 데이터 반환
      */
     @Transactional
-    public JoinMemberResponseDto createMember(JoinMemberRequestDto request) {
+    public MemberJoinResponseDto createMember(MemberJoinRequestDto request) {
         /**
          * 중복 되는 이메일 예외 처리 조건
          */
@@ -45,7 +45,7 @@ public class MemberService {
 
         MemberJoinEntity savedMember = memberRepository.save(inputJoinMember);
 
-        return new JoinMemberResponseDto(
+        return new MemberJoinResponseDto(
                 savedMember.getId(),
                 savedMember.getMemberName()
         );
@@ -101,12 +101,19 @@ public class MemberService {
      * @return LoginMemberResponseDto 데이터 반환
      */
     @Transactional
-    public LoginMemberResponseDto loginMember(LoginMemberRequestDto request) {
+    public MemberLoginResponseDto loginMember(MemberLoginRequestDto request) {
         MemberJoinEntity member = memberRepository
                 .findByMemberEmail(request.getMemberEmail())
                 .orElseThrow(
                         () -> new CustomException(ExceptionMessageEnum.EMPTY_EMAIL)
                 );
+
+        /**
+         * 탈퇴한 회원 예외 처리
+         */
+        if (member.getMemberCondition().equals("no_member")) {
+            throw new CustomException(ExceptionMessageEnum.MEMBER_DELETE_CHECK);
+        }
 
         /**
          * 최종 회원 정보 조회
@@ -117,9 +124,10 @@ public class MemberService {
             throw new CustomException(ExceptionMessageEnum.MEMBER_CHECK);
         }
 
-        return new LoginMemberResponseDto(
+        return new MemberLoginResponseDto(
                 member.getId(),
                 member.getMemberName(),
+                member.getMemberCondition(),
                 member.getMemberName() + "님 로그인 되셨습니다."
         );
     }
