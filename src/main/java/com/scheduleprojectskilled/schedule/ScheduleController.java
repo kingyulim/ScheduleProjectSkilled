@@ -5,9 +5,9 @@ import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleCreateRequestDto;
 import com.scheduleprojectskilled.schedule.dto.request.ScheduleUpdateRequestDto;
-import com.scheduleprojectskilled.schedule.dto.response.CreateScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.DeleteScheduleResponseDto;
-import com.scheduleprojectskilled.schedule.dto.response.FindScheduleResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleCreateResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleDeleteResponseDto;
+import com.scheduleprojectskilled.schedule.dto.response.ScheduleFindResponseDto;
 import com.scheduleprojectskilled.schedule.dto.response.ScheduleUpdateResponseDto;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class ScheduleController {
      * @return 검사된 데이터 JSON 반환
      */
     @PostMapping("/createSchedule")
-    public ResponseEntity<CreateScheduleResponseDto> createSchedule(
+    public ResponseEntity<ScheduleCreateResponseDto> createSchedule(
             @Valid @RequestBody ScheduleCreateRequestDto request,
             HttpSession session
     ) {
@@ -55,7 +54,7 @@ public class ScheduleController {
      * @return 검사된 데이터 JSON 반환
      */
     @GetMapping("/findSchedule/{id}")
-    public ResponseEntity<FindScheduleResponseDto> findOneSchedule(@PathVariable("id") Long scheduleId){
+    public ResponseEntity<ScheduleFindResponseDto> findOneSchedule(@PathVariable("id") Long scheduleId){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(scheduleService.findOneSchedule(scheduleId));
@@ -66,11 +65,11 @@ public class ScheduleController {
      * @return 검사된 데이터 JSON 반환
      */
     @GetMapping("/findSchedule")
-    public ResponseEntity<Map<String, List<FindScheduleResponseDto>>> findAllSchedule(){
+    public ResponseEntity<Map<String, List<ScheduleFindResponseDto>>> findAllSchedule(){
 
-        List<FindScheduleResponseDto> scheduleList = scheduleService.findAllSchedule();
+        List<ScheduleFindResponseDto> scheduleList = scheduleService.findAllSchedule();
 
-        Map<String, List<FindScheduleResponseDto>> scheduleMap = Map.of("scheduleList", scheduleList);
+        Map<String, List<ScheduleFindResponseDto>> scheduleMap = Map.of("scheduleList", scheduleList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -84,13 +83,13 @@ public class ScheduleController {
      * @return Map<String, List<FindScheduleResponseDto>> json 반환
      */
     @GetMapping("/findMySchedule")
-    public ResponseEntity<Map<String, List<FindScheduleResponseDto>>> findMySchedule(
+    public ResponseEntity<Map<String, List<ScheduleFindResponseDto>>> findMySchedule(
             @RequestParam Long memberId,
             @RequestParam String memberName
     ) {
-        List<FindScheduleResponseDto> scheduleMyList = scheduleService.findMySchedule(memberId, memberName);
+        List<ScheduleFindResponseDto> scheduleMyList = scheduleService.findMySchedule(memberId, memberName);
 
-        Map<String, List<FindScheduleResponseDto>> scheduleMap = Map.of("scheduleMyList", scheduleMyList);
+        Map<String, List<ScheduleFindResponseDto>> scheduleMap = Map.of("scheduleMyList", scheduleMyList);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -130,14 +129,14 @@ public class ScheduleController {
      * @return 검사된 데이터 JSON 반환
      */
     @DeleteMapping("/deleteSchedule/{id}")
-    public ResponseEntity<DeleteScheduleResponseDto> deleteSchedule(@PathVariable("id") Long scheduleId, HttpSession session) {
+    public ResponseEntity<ScheduleDeleteResponseDto> deleteSchedule(@PathVariable("id") Long scheduleId, HttpSession session) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
 
         if (thisSession == null) {
             throw new CustomException(ExceptionMessageEnum.NO_LOGIN);
         }
 
-        DeleteScheduleResponseDto deleteSchedule = scheduleService.deleteSchedule(scheduleId, thisSession.getId());
+        ScheduleDeleteResponseDto deleteSchedule = scheduleService.deleteSchedule(scheduleId, thisSession.getId());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
