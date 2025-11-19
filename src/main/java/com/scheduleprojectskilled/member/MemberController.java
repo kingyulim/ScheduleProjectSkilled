@@ -2,8 +2,8 @@ package com.scheduleprojectskilled.member;
 
 import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
-import com.scheduleprojectskilled.member.dto.request.JoinMemberRequestDto;
-import com.scheduleprojectskilled.member.dto.request.LoginMemberRequestDto;
+import com.scheduleprojectskilled.member.dto.request.MemberJoinRequestDto;
+import com.scheduleprojectskilled.member.dto.request.MemberLoginRequestDto;
 import com.scheduleprojectskilled.member.dto.request.MemberDeleteRequestDto;
 import com.scheduleprojectskilled.member.dto.request.MemberUpdateRequestDto;
 import com.scheduleprojectskilled.member.dto.response.*;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +28,8 @@ public class MemberController {
      * @return JoinMemberResponseDto json 반환
      */
     @PostMapping("/join")
-    public ResponseEntity<JoinMemberResponseDto> createMember(
-            @Valid @RequestBody JoinMemberRequestDto request,
+    public ResponseEntity<MemberJoinResponseDto> createMember(
+            @Valid @RequestBody MemberJoinRequestDto request,
             HttpSession session
     ) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
@@ -54,8 +53,8 @@ public class MemberController {
      * @return LoginMemberResponseDto json 반환
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginMemberResponseDto> login(
-            @Valid @RequestBody LoginMemberRequestDto request,
+    public ResponseEntity<MemberLoginResponseDto> login(
+            @Valid @RequestBody MemberLoginRequestDto request,
             HttpSession session
     ) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
@@ -67,11 +66,12 @@ public class MemberController {
             throw new CustomException(ExceptionMessageEnum.LOGIN_CHECK);
         }
 
-        LoginMemberResponseDto loginMemberResponseDto = memberService.loginMember(request);
+        MemberLoginResponseDto memberLoginResponseDto = memberService.loginMember(request);
 
         SessionResponse sessionResponse = new SessionResponse (
-                loginMemberResponseDto.getId(),
-                loginMemberResponseDto.getMemberName()
+                memberLoginResponseDto.getId(),
+                memberLoginResponseDto.getMemberName(),
+                memberLoginResponseDto.getMemberCondition()
         );
 
         /**
@@ -81,7 +81,7 @@ public class MemberController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(loginMemberResponseDto);
+                .body(memberLoginResponseDto);
     }
 
     /**
