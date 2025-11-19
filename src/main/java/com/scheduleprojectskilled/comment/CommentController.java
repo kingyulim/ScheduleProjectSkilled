@@ -11,6 +11,7 @@ import com.scheduleprojectskilled.common.exception.CustomException;
 import com.scheduleprojectskilled.common.exception.ExceptionMessageEnum;
 import com.scheduleprojectskilled.member.dto.response.SessionResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class CommentController {
     @PostMapping("/CommentCreate/{scheduleId}")
     public ResponseEntity<CommentCreateResponseDto> createComment(
             @PathVariable("scheduleId") Long scheduleId,
-            @RequestBody CommentCreateRequestDto request,
+            @Valid @RequestBody CommentCreateRequestDto request,
             HttpSession session
     ) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
@@ -78,7 +79,7 @@ public class CommentController {
     public ResponseEntity<CommentUpdateResponseDto> updateComment(
             @PathVariable("scheduleId") Long scheduleId,
             @PathVariable("commentId") Long commentId,
-            @RequestBody CommentUpdateRequestDto request,
+            @Valid @RequestBody CommentUpdateRequestDto request,
             HttpSession session
     ) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
@@ -105,7 +106,7 @@ public class CommentController {
     @DeleteMapping("/commentDelete/{scheduleId}")
     public ResponseEntity<CommentDeleteResponseDto> deleteComment(
             @PathVariable("scheduleId") Long scheduleId,
-            @RequestBody CommentDeleteRequestDto request,
+            @Valid  @RequestBody CommentDeleteRequestDto request,
             HttpSession session
     ) {
         SessionResponse thisSession = (SessionResponse) session.getAttribute("thisSession");
