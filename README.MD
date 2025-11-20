@@ -4,6 +4,12 @@ Spring Boot 기반으로 구현한 **일정 관리 + 유저 관리 + 인증/인�
 기본 CRUD부터 로그인(Session/Cookie 인증), 비밀번호 암호화(도전), Validation(도전)까지 구현합니다.
 
 ---
+# 🧾 명세서 ∙ ERD
+명세서 : https://www.notion.so/2b0e428d946980b8b8e4eaf2307c0ddd?v=2b0e428d946980dca604000c24387eb5&source=copy_link
+
+ERD : ![img.png](img.png)
+
+---
 
 # 📚 기술 스택
 
